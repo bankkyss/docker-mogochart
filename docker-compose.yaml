@@ -1,41 +1,48 @@
+# version: "2"
+# services:
+#   mongochart:
+#     networks:
+#       - public
+#     restart: always
+#     image: l3ankky/charts:latest
+#     environment:
+#       - CHARTS_SUPPORT_WIDGET_AND_METRICS=on
+#       - CHARTS_MONGODB_URI=mongodb://mongodummy:27017/admin?replicaSet=rs0
+#     deploy:
+#       mode: replicated
+#       replicas: 1
+#       labels:
+#         - traefik.enable=true
+#         - traefik.http.routers.mongochart.entrypoints=websecure
+#         - traefik.http.routers.mongochart.tls.certresolver=myresolver
+#         - traefik.http.routers.mongochart.rule=Host(`mongochart.pdpa.rmutsv.ac.th`)
+#         - traefik.http.services.mongochart.loadbalancer.server.port=80
+  
+  
+#   mongodummy:
+#     networks:
+#       - public
+#     image: l3ankky/charts_mongo:latest
+#     deploy:
+#       mode: replicated
+#       replicas: 1
+
+# networks:
+#   public:
+#     external: true
+
+
 version: '2'
 
 services:
-  charts:
-    build:
-      context: 'docker/charts'
-      args:
-        - EMAIL=admin@example.com
-        - PASSWORD=StrongPassw0rd
-    image: charts
-    ports:
-      - 8080:80
-    environment:
-      CHARTS_SUPPORT_WIDGET_AND_METRICS: 'on'
-      CHARTS_MONGODB_URI: 'mongodb://mongo:27017/admin?replicaSet=rs0'
-    volumes:
-      - keys:/mongodb-charts/volumes/keys
-      - logs:/mongodb-charts/volumes/logs
-      - db-certs:/mongodb-charts/volumes/db-certs
-      - web-certs:/mongodb-charts/volumes/web-certs
-    depends_on:
-      - mongo
-    container_name: charts
-
   mongo:
     hostname: mongo
     build:
       context: 'docker/mongo'
     ports:
       - 27017:27017
-    volumes:
-      - mongo:/data/db
+    # volumes:
+    #   - mongo:/data/db
     image: charts_mongo
     container_name: mongo
-
-volumes:
-  keys:
-  logs:
-  db-certs:
-  web-certs:
-  mongo:
+    platform: linux/amd64
